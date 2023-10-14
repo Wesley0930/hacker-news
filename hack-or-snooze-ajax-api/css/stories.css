@@ -50,3 +50,13 @@
 .favorite-button.gold { 
   color: gold;
 }
+
+/* delete button */
+.trash-button {
+  background-image: url('https://cdn-icons-png.flaticon.com/512/542/542724.png'); /* Replace with your actual path */
+  background-size: cover;
+  width: 14px; /* Adjust the size as needed */
+  height: 14px; /* Adjust the size as needed */
+  border: none;
+  cursor: pointer;
+}

@@ -79,27 +79,31 @@ class StoryList {
       url: `${BASE_URL}/stories`,
       method: "POST",
       data: {
-        token: user['loginToken'],
+        token: user.loginToken,
         story: {title, author, url}
       }
     });
     const newStory = new Story(response.data.story);
     this.stories.unshift(newStory); // move new story to front of stories
     user.ownStories.unshift(newStory);
+    
     return newStory;
   }
 
-  async removeStory(user, story){
-    console.log(story.storyId);
+  /** Delete story from DOM and API 
+   * 
+   * - user - the current instance of User who will delete the story
+   * - storyID - the ID of story to be deleted
+  */
+  async removeStory(user, storyId){
     await axios({
-      url: `${BASE_URL}/stories/${story.storyId}`,
+      url: `${BASE_URL}/stories/${storyId}`,
       method: "DELETE",
-      data: {
-        token: user['loginToken'],
-      }
+      data: {token: user.loginToken}
     });
-    // this.stories = this.stories.filter(story => story.storyId !== storystoryId);
-    // user.favorites = user.favorites.filter(story => story.storyId !== storystoryId);
+    this.stories = this.stories.filter(story => story.storyId !== storyId);
+    // user.ownStories = user.ownStories.filter(story => s.storyId !== story.storyId);
+    user.favorites = user.favorites.filter(s => s.storyId !== storyId);
   }
 } 
 
@@ -220,14 +224,14 @@ class User {
     }
   }
 
-  async addFavoriteStory(story) { // add story to currentUser's favorites
-    console.debug("pushFavoriteStory");
+  // async addFavoriteStory(story) { // add story to currentUser's favorites
+  //   console.debug("pushFavoriteStory");
     
-  }
+  // }
   
-  async removeFavoriteStory(story) { // remove story from currentUser's favorites
-    console.debug("popFavoriteStory");
-  }
+  // async removeFavoriteStory(story) { // remove story from currentUser's favorites
+  //   console.debug("popFavoriteStory");
+  // }
 
   async addOrRemoveFavoriteStory(action, story) { // add a new favorite or delete a user favorite
     const token = this.loginToken;

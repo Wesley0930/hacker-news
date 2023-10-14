@@ -22,15 +22,18 @@ async function getAndShowStoriesOnStart() {
 function generateStoryMarkup(story) {
   console.debug("generateStoryMarkup", story);
   const hostName = story.getHostName();
+
   return $(`
       <li id="${story.storyId}">
+        ${deleteHTML()}
         ${starHTML(story)}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
         <small class="story-hostname">(${hostName})</small>
         <small class="story-author">by ${story.author}</small>
-        <small class="story-user">posted by ${story.username}</small>
+        <small class="story-user">posted by ${story.username} </small>
+        
       </li>
     `);
 }
@@ -47,7 +50,7 @@ function starHTML(story){
 
 // delete HTML
 function deleteHTML(){
-  
+  return `<button class="trash-button"></button>`;
 }
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
@@ -60,7 +63,7 @@ function putStoriesOnPage() {
     const $story = generateStoryMarkup(story);
     $allStoriesList.append($story);
   }
-
+  // no stories available
   $allStoriesList.show();
 }
 
@@ -88,17 +91,16 @@ async function submitNewStory(evt){
   console.debug("submitNewStory");
   evt.preventDefault();
   // submit form values
-  let $titleValue = $("#new-title").val();
-  let $authorValue = $("#new-author").val();
-  let $urlValue = $("#new-url").val();
-  const newStory = await storyList.addStory(currentUser, {
-    title: $titleValue, 
-    author: $authorValue, 
-    url: $urlValue
-    });
+  const title = $("#new-title").val();
+  const author = $("#new-author").val();
+  const url = $("#new-url").val();
+  const username = currentUser.username
+  const storyData = {title, url, author, username};
+  console.log(title, author, url, username);
+  const newStory = await storyList.addStory(currentUser, storyData);
   $allStoriesList.prepend(generateStoryMarkup(newStory));
   putStoriesOnPage();
-  $submitForm.hide().trigger("reset");;
+  $submitForm.hide().trigger("reset");
 }
 
 $submitForm.on("submit", submitNewStory);
@@ -122,4 +124,15 @@ async function toggleFavoriteStory(evt) {
 $allStoriesList.on("click", $(".favorite-button"), toggleFavoriteStory);
 $favoritesList.on("click", $(".favorite-button"), toggleFavoriteStory);
 
+async function deleteStory(evt) {
+  console.debug("deleteStory")
+  let $e = $(evt.target); // button
+  let storyId = $e.closest("li").attr("id"); // story id based on list item
+  // let story = storyList.stories.find(story => story.storyId === $storyId) // find the actual story from storyList
+  await storyList.removeStory(currentUser, storyId);
 
+  // putUserStoriesOnPage(); // show new list of stories
+  location.reload();
+}
+
+$allStoriesList.on("click", ".trash-button", deleteStory);

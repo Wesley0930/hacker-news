@@ -10,8 +10,8 @@ const $favoritesList = $("#favorites-list"); // favorite stories lsit
 
 const $loginForm = $("#login-form");
 const $signupForm = $("#signup-form");
-
 const $submitForm = $("#story-submit-form"); // submit form
+
 const $navLogin = $("#nav-login");
 const $navUserProfile = $("#nav-user-profile");
 const $navLogOut = $("#nav-logout");
@@ -25,9 +25,9 @@ const $navFavoriteStories = $("#nav-favorites"); // favorite story
 
 function hidePageComponents() {
   const components = [
-    $allStoriesList,
-    $loginForm,
-    $signupForm,
+    $allStoriesList, // show all stories list
+    $loginForm, // login form
+    $signupForm, // new user sign up form
     $submitForm, // submit form
     $favoritesList // favorite stories list
   ];
